@@ -48,33 +48,33 @@ const limiter = rateLimit({
 app.use(limiter);
 
 //defined swagger
-const swaggerOptions = {
-    swaggerDefinition:{
-        openapi: '3.0.0',
-        info: {
-            title: 'Library API',
-            version: '1.0.0',
-            description: 'A simple Express VacQ API'
-        },
-        servers: [
-            {
-                url: 'http://localhost:5000/api/v1'
-            }
-        ]
-    },
-    apis: ['./routes/*.js'],
-}
-const swaggerJsDocs = swaggerJsDoc(swaggerOptions);
-app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerJsDocs));
+// const swaggerOptions = {
+//     swaggerDefinition:{
+//         openapi: '3.0.0',
+//         info: {
+//             title: 'Library API',
+//             version: '1.0.0',
+//             description: 'A simple Express VacQ API'
+//         },
+//         servers: [
+//             {
+//                 url: 'http://localhost:5000/api/v1'
+//             }
+//         ]
+//     },
+//     apis: ['./routes/*.js'],
+// }
+// const swaggerJsDocs = swaggerJsDoc(swaggerOptions);
+// app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerJsDocs));
 
 //route files
-const hospitals = require('./routes/hospitals');
-const appointments = require('./routes/appointments');
+const massageShops = require('./routes/massageShops');
+const reservations = require('./routes/reservations');
 const auth = require('./routes/auth');
 
 //mount routers
-app.use('/api/v1/hospitals', hospitals);
-app.use('/api/v1/appointments', appointments);
+app.use('/api/v1/massageShops', massageShops);
+app.use('/api/v1/reservations', reservations);
 app.use('/api/v1/auth', auth);
 
 const PORT = process.env.PORT || 5000 ;

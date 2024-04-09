@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const HospitalSchema = new mongoose.Schema({
+const MassageShopSchema = new mongoose.Schema({
     name:{
         type: String,
         required: [true, 'Please add a name'],
@@ -26,30 +26,35 @@ const HospitalSchema = new mongoose.Schema({
         maxlength: [5, 'Postal code can not be be more than 5 digits']
     },
     tel:{
-        type: String
+        type: String,
+        required: [true, 'Please add a telephone number']
     },
     region:{
         type: String,
         required: [true, 'Please add a region']
+    },
+    open_close_time:{
+        type: String,
+        required: [true, 'Please add a open and close time']
     }
 }, {
     toJSON: {virtuals:true},
     toObject: {virtuals:true}
 });
 
-// cascade delete appointments when a hospital is deleted
-HospitalSchema.pre('remove', async function(next){
-    console.log(`Appointments being removed from hospital ${this._id}`);
-    await this.model('Appointment').deleteMany({hostipal: this._id});
+// cascade delete reservations when a massage shop is deleted
+MassageShopSchema.pre('remove', async function(next){
+    console.log(`Reservations being removed from massage shop ${this._id}`);
+    await this.model('Reservation').deleteMany({massageShop: this._id});
     next();
 })
 
 // reverse populate with virtuals
-HospitalSchema.virtual('appointments', {
-    ref: 'Appointment',
+MassageShopSchema.virtual('reservations', {
+    ref: 'Reservation',
     localField: '_id',
-    foreignField: 'hospital',
+    foreignField: 'massageShop',
     justOne: false
 });
 
-module.exports = mongoose.model('Hospital', HospitalSchema);
+module.exports = mongoose.model('MassageShop', MassageShopSchema);

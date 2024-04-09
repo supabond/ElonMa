@@ -1,19 +1,19 @@
 const express = require('express');
-const {getHospitals, getHospital, createHospital, updateHospital, deleteHospital, getVacCenters} = require('../controllers/hospitals')
+const {getMassageShops, getMassageShop, createMassageShop, updateMassageShop, deleteMassageShop /*, getVacCenters */} = require('../controllers/massageShops')
 
 // include other resource routers
-const appointmentRouter = require('./appointments');
+const reservationRouter = require('./reservations');
 
 const router = express.Router() ;
 
 const { protect, authorize } = require('../middleware/auth');
 
 // re-route into other resource routers
-router.use('/:hospitalId/appointments/', appointmentRouter);
+router.use('/:massageShopId/reservations', reservationRouter);
 
 //router.route('/vacCenters').get(getVacCenters);
-router.route('/').get(getHospitals).post(protect, authorize('admin'), createHospital);
-router.route('/:id').get(getHospital).put(protect, updateHospital).delete(protect, authorize('admin'), deleteHospital);
+router.route('/').get(getMassageShops).post(protect, authorize('admin'), createMassageShop);
+router.route('/:id').get(getMassageShop).put(protect, updateMassageShop).delete(protect, authorize('admin'), deleteMassageShop);
 
 module.exports = router ;
 
