@@ -108,7 +108,7 @@ exports.addReservation = async (req,res,next) => {
             );
 
             // Check if the user has exceeded the maximum number of reservations per day
-            const maxReservationsPerDay = massageShop.maxReservationsPerDay || 2100; 
+            const maxReservationsPerDay = massageShop.maxReservationsPerDay || 2; 
             if (todayReservations.length >= maxReservationsPerDay) {
                 return res.status(400).json({
                     success: false,
