@@ -1,5 +1,6 @@
 const Reservation = require('../models/Reservation');
 const MassageShop = require('../models/MassageShop');
+const moment = require('moment');
 
 //@desc     Get all reservations
 //@route    GET /api/v1/reservations
@@ -79,7 +80,7 @@ exports.addReservation = async (req,res,next) => {
         if(!massageShop){
             return res.status(404).json({
                 success: false,
-                meesage: `No massageShop with id of ${req.params.massageShopId}`
+                message: `No massageShop with id of ${req.params.massageShopId}`
             });
         }
 
@@ -87,9 +88,42 @@ exports.addReservation = async (req,res,next) => {
         req.body.user = req.user.id;
 
         // check for existed reservation
-        const existedReservation = await Reservation.find({user:req.user.id});
-        console.log(existedReservation.length);
-        console.log(req.user.role);
+        const reserveDate = new Date(req.body.reserveDate);
+        const currentTime = new Date();
+        if (reserveDate < currentTime) {
+            return res.status(400).json({
+                success: false,
+                message: "Reservation date cannot be in the past"
+            });
+        }
+
+        // Check for existing reservations for the user
+        const existedReservation = await Reservation.find({ user: req.user.id });
+
+        if (req.user.role !== 'admin') {
+            // Count the number of reservations made by the user today
+            const today = moment().startOf('day'); // Get the start of the current day
+            const todayReservations = existedReservation.filter(reservation =>
+                moment(reservation.CreatedAt).isSame(today, 'day')
+            );
+
+            // Check if the user has exceeded the maximum number of reservations per day
+            const maxReservationsPerDay = massageShop.maxReservationsPerDay || 2100; 
+            if (todayReservations.length >= maxReservationsPerDay) {
+                return res.status(400).json({
+                    success: false,
+                    message: `User with ID ${req.user.id} has already made ${maxReservationsPerDay} reservations today`
+                });
+            }
+        }
+
+        // Check if reservation is overdue (if applicable)
+        if (moment().isAfter(massageShop.reservationDueDate)) {
+            return res.status(400).json({
+                success: false,
+                message: "Reservation is overdue. Cannot make a reservation."
+            });
+        }
 
         // if the user is not an admin, they can only create 3 reservations
         if (existedReservation.length >= 3 && req.user.role !== 'admin'){

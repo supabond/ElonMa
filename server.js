@@ -77,7 +77,7 @@ app.use('/api/v1/massageShops', massageShops);
 app.use('/api/v1/reservations', reservations);
 app.use('/api/v1/auth', auth);
 
-const PORT = process.env.PORT || 5000 ;
+const PORT = process.env.PORT || 5050 ;
 
 const server = app.listen(PORT, console.log('server running in ', process.env.NODE_ENV, ' mode on port ', PORT));
 
