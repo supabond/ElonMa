@@ -100,6 +100,7 @@ exports.addReservation = async (req,res,next) => {
         // Check for existing reservations for the user
         const existedReservation = await Reservation.find({ user: req.user.id });
 
+        // Only proceed with reservation limit checks if the user is not an admin
         if (req.user.role !== 'admin') {
             // Count the number of reservations made by the user today
             const today = moment().startOf('day'); // Get the start of the current day
@@ -107,8 +108,8 @@ exports.addReservation = async (req,res,next) => {
                 moment(reservation.CreatedAt).isSame(today, 'day')
             );
 
-            // Check if the user has exceeded the maximum number of reservations per day
-            const maxReservationsPerDay = massageShop.maxReservationsPerDay || 2; 
+            // Limit reservations per user per day to 2
+            const maxReservationsPerDay = 2; // Change the limit to 2
             if (todayReservations.length >= maxReservationsPerDay) {
                 return res.status(400).json({
                     success: false,
@@ -126,10 +127,10 @@ exports.addReservation = async (req,res,next) => {
         }
 
         // if the user is not an admin, they can only create 3 reservations
-        if (existedReservation.length >= 3 && req.user.role !== 'admin'){
+        if (existedReservation.length >= 5 && req.user.role !== 'admin'){
             return res.status(400).json({
                 success: false,
-                message: `The user with ID ${req.user.id} has already made 3 reservations`
+                message: `The user with ID ${req.user.id} has already made 5 reservations`
             });
         }
 
