@@ -122,8 +122,8 @@ exports.addReservation = async (req,res,next) => {
             const existingReservationForShop = await MassageShop.findOne({ 
                 user: req.user.id,
                 reserveDate: {
-                    $gte: today.toDate(),
-                    $lt: moment(today).endOf('day').toDate()
+                    $gte: req.reserveDate,
+                    $lt: moment(req.reserveDate).endOf('day')
                 }
             });
 
