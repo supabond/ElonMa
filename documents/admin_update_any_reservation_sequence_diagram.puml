@@ -1,0 +1,32 @@
+@startuml Admin Update Any Reservation Sequence Diagram 
+title Admin Update Any Reservation Sequence Diagram
+actor Admin
+participant "Server" as Server
+participant "Auth Middleware" as Auth
+participant "Reservation Controller" as Controller
+database "Reservation Model" as Model
+
+Admin -> Server: PUT /api/v1/reservations/:id
+activate Server
+
+Server -> Auth: protect(req, res, next) \n, authorize('admin','user')
+activate Auth
+
+Auth --> Server: Returns admin data
+deactivate Auth
+
+Server -> Controller: updateReservation(req, res, next)
+activate Controller
+
+Controller -> Model: findByIdAndUpdate(req.params.id, req.body)
+activate Model
+
+Model --> Controller: Returns updated reservation
+deactivate Model
+
+Controller --> Server: Returns success response with updated reservation data
+deactivate Controller
+
+Server --> Admin: Returns success response with updated reservation data
+deactivate Server
+@enduml

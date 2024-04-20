@@ -1,0 +1,27 @@
+@startuml User Get All Massage Shops Sequence Diagram 
+title User Get All Massage Shops Sequence Diagram
+
+actor User
+participant "Server" as Server
+participant "MassageShop Controller" as MassageShopController
+database "MassageShop Model" as Model
+
+User -> Server: GET /api/v1/massageShops
+activate Server
+
+Server -> MassageShopController: getMassageShops(req, res, next)
+activate MassageShopController
+
+MassageShopController -> Model: find()
+activate Model
+
+Model --> MassageShopController: Return all massage shops data
+deactivate Model
+
+MassageShopController --> Server: Return success response with massage shops data
+deactivate MassageShopController
+
+Server --> User: Return success response with massage shops data
+deactivate Server
+
+@enduml

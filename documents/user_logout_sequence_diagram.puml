@@ -1,0 +1,18 @@
+@startuml User Logout Sequence Diagram 
+title User Logout Sequence Diagram
+actor User
+participant "Server" as Server
+participant "Auth Controller" as Auth
+
+User -> Server: POST /api/v1/auth/logout
+activate Server
+
+Server -> Auth: logout(req, res, next)
+activate Auth
+
+Auth --> Server: Clear token
+deactivate Auth
+
+Server --> User: Response with success message
+deactivate Server
+@enduml

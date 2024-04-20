@@ -1,0 +1,32 @@
+@startuml Admin Get All Reservations Sequence Diagram  
+title Admin Get All Reservations Sequence Diagram
+actor Admin
+participant "Server" as Server
+participant "Auth Middleware" as Auth
+participant "Reservation Controller" as Controller
+database "Reservation Model" as Model
+
+Admin -> Server: GET /api/v1/reservations
+activate Server
+
+Server -> Auth: protect(req, res, next)
+activate Auth
+
+Auth --> Server: Returns admin data
+deactivate Auth
+
+Server -> Controller: getReservations(req, res, next)
+activate Controller
+
+Controller -> Model: find()
+activate Model
+
+Model --> Controller: Returns all reservations
+deactivate Model
+
+Controller --> Server: Returns success response with all reservations data
+deactivate Controller
+
+Server --> Admin: Returns success response with all reservations data
+deactivate Server
+@enduml

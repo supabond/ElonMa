@@ -1,0 +1,38 @@
+@startuml Admin Delete Any Reservation Sequence Diagram 
+title Admin Delete Any Reservation Sequence Diagram
+actor Admin
+participant "Server" as Server
+participant "Auth Middleware" as Auth
+participant "Reservation Controller" as Controller
+database "Reservation Model" as Model
+
+Admin -> Server: DELETE /api/v1/reservation/:id
+activate Server
+
+Server -> Auth: protect(req, res, next)\n, authorize('admin','user')
+activate Auth
+
+Auth --> Server: Returns admin data
+deactivate Auth
+
+Server -> Controller: deleteReservation(req, res, next)
+activate Controller
+
+Controller -> Model: findById(req.params.id)
+activate Model
+
+Model --> Controller: Returns reservation data
+deactivate Model
+
+Controller -> Model: remove()
+activate Model
+
+Model --> Controller: Returns success
+deactivate Model
+
+Controller --> Server: Returns success response
+deactivate Controller
+
+Server --> Admin: Returns success response
+deactivate Server
+@enduml

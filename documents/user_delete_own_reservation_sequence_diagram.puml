@@ -1,0 +1,38 @@
+@startuml User Delete Own Reservation Sequence Diagram 
+title User Delete Own Reservation Sequence Diagram
+actor User
+participant "Server" as Server
+participant "Auth Middleware" as Auth
+participant "Reservation Controller" as Controller
+database "Reservation Model" as Model
+
+User -> Server: DELETE /api/v1/reservations/:id
+activate Server
+
+Server -> Auth: protect(req, res, next)\n, authorize('user','admin')
+activate Auth
+
+Auth --> Server: Returns user data
+deactivate Auth
+
+Server -> Controller: deleteReservation(req, res, next)
+activate Controller
+
+Controller -> Model: findById(req.params.id)
+activate Model
+
+Model --> Controller: Returns reservation data
+deactivate Model
+
+Controller -> Model: remove()
+activate Model
+
+Model --> Controller: Returns success
+deactivate Model
+
+Controller --> Server: Returns success response
+deactivate Controller
+
+Server --> User: Returns success response
+deactivate Server
+@enduml

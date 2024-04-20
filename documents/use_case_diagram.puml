@@ -1,0 +1,31 @@
+@startuml Massage Reservation System Use Case Diagram 
+left to right direction
+actor "User" as user
+rectangle "Massage Reservation System" as ElonMaSystem{
+  usecase "Register" as register
+  usecase "Login" as login
+  usecase "Logout" as logout
+  usecase "View\nMassage Shops" as viewMassageShops
+  usecase "Create\nReservation" as createReservation
+  usecase "View\nReservation" as viewReservation
+  usecase "Update\nReservation" as updateReservation
+  usecase "Delete\nReservation" as deleteReservation
+}
+
+user -- login
+user -- register
+user -- viewMassageShops
+user -- createReservation
+user -- viewReservation
+user -- updateReservation
+user -- deleteReservation
+user -- logout
+
+actor "Admin" as admin
+
+login -- admin
+viewReservation -- admin
+updateReservation -- admin
+deleteReservation -- admin
+
+@enduml

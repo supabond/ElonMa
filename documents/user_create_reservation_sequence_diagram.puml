@@ -1,0 +1,32 @@
+@startuml User Create Reservation Sequence Diagram
+title User Create Reservation Sequence Diagram
+actor User
+participant "Server" as Server
+participant "Auth Middleware" as Auth
+participant "Reservation Controller" as Controller
+database "Reservation Model" as Model
+
+User -> Server: POST /api/v1/massageShops/:massageShopId/reservation
+activate Server
+
+Server -> Auth: protect(req, res, next)\n, authorize('user','admin')
+activate Auth
+
+Auth --> Server: Returns user data
+deactivate Auth
+
+Server -> Controller: addReservation(req, res, next)
+activate Controller
+
+Controller -> Model: create(req.body)
+activate Model
+
+Model --> Controller: Returns created reservation
+deactivate Model
+
+Controller --> Server: Returns success response with reservation data
+deactivate Controller
+
+Server --> User: Returns success response with reservation data
+deactivate Server
+@enduml
