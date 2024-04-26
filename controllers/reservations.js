@@ -144,7 +144,7 @@ exports.addReservation = async (req,res,next) => {
         }
 
         // if the user is not an admin, they limit of reservations
-        if (existedReservation.length >= 50 && req.user.role !== 'admin'){
+        if (existedReservation.length >= 5 && req.user.role !== 'admin'){
             return res.status(400).json({
                 success: false,
                 message: `The user with ID ${req.user.id} has already made ${process.env.LimitPerPerson} reservations`
