@@ -112,6 +112,7 @@ exports.addReservation = async (req,res,next) => {
         const existedReservation = await Reservation.find({ user: req.user.id });
         const today = moment().startOf('day'); // Get the start of the current day
 
+        
         // Only proceed with reservation limit checks if the user is not an admin
         if (req.user.role !== 'admin') {
             // Count the number of reservations made by the user today
@@ -119,23 +120,33 @@ exports.addReservation = async (req,res,next) => {
                 moment(reservation.CreatedAt).isSame(today, 'day')
             );
 
-            const existingReservationForShop = await MassageShop.findOne({ 
+            // const existingReservationForShop = await MassageShop.findOne({ 
+            //     user: req.user.id,
+            //     reserveDate: {
+            //         $gte: req.reserveDate,
+            //         $lt: moment(req.reserveDate).endOf('day')
+            //     }
+            // });
+
+            const existingReservationForShopCount = await Reservation.countDocuments({ 
                 user: req.user.id,
+                massageShop: req.params.massageShopId,
                 reserveDate: {
-                    $gte: req.reserveDate,
-                    $lt: moment(req.reserveDate).endOf('day')
+                    $gte: moment(req.body.reserveDate).startOf('day').toDate(),
+                    $lt: moment(req.body.reserveDate).endOf('day').toDate()
                 }
             });
 
             // Limit reservations per user per day
             const maxReservationsPerDay = process.env.LimitPerDay; // Change the limit to 2
+            
             if (todayReservations.length >= maxReservationsPerDay) {
                 return res.status(400).json({
                     success: false,
                     message: `User with ID ${req.user.id} has already made ${maxReservationsPerDay} reservations today`
                 });
             }
-            if (existingReservationForShop) {
+            if (existingReservationForShopCount >= 1) {
                 return res.status(400).json({
                     success: false,
                     message: `User with ID ${req.user.id} has already made reservations in ${massageShop.name} shop today`
